@@ -1,5 +1,6 @@
 package com.example.fitnessapp.backend.model
 
+import com.example.fitnessapp.backend.dao.UserDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

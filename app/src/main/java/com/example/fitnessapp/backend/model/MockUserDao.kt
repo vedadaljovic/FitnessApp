@@ -1,5 +1,7 @@
 package com.example.fitnessapp.backend.model
 
+import com.example.fitnessapp.backend.dao.UserDao
+
 class MockUserDao : UserDao {
     private val users = mutableListOf<User>()
 

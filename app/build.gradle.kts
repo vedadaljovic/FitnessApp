@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -79,6 +80,10 @@ dependencies {
     // ViewModel and LiveData for MVVM architecture
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
     implementation("androidx.lifecycle:lifecycle-livedata:2.3.1")
+
+    // JSON serialization library, works with the Kotlin serialization plugin
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("androidx.room:room-runtime:$roomVersion")
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1") // Add ViewModel support
 }

@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fitnessapp.R
 import com.example.fitnessapp.backend.model.MockUserDao
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
-import com.example.fitnessapp.backend.model.UserDao
+import com.example.fitnessapp.backend.dao.UserDao
 import com.example.fitnessapp.backend.model.UserRepository
 import com.example.fitnessapp.backend.viewmodel.UserViewModel
 import com.example.fitnessapp.backend.viewmodel.UserViewModelFactory
