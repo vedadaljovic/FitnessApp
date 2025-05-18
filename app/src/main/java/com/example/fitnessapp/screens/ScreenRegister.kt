@@ -233,7 +233,7 @@ fun ScreenRegister(navController: NavController) {
                 text = "Log in",
                 color = Color(0xFFEDFF63),
                 fontSize = 16.sp,
-                modifier = Modifier.clickable { /* Handle sign up click */ }
+                modifier = Modifier.clickable { navController.navigate("LoginScreen") }
             )
         }
     }
