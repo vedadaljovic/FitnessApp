@@ -10,7 +10,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         database = Room.databaseBuilder(
-            applicationContext,
+            this,
             AppDatabase::class.java, "fitnessapp-database"
         ).build()
     }

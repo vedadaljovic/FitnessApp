@@ -78,7 +78,7 @@ fun ScreenStart3(navController: NavController) {
 
         // Next Button
         Button(
-            onClick = { /* Handle next click */ },
+            onClick = { navController.navigate("ScreenStart4")  },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Gray,
                 contentColor = Color.White

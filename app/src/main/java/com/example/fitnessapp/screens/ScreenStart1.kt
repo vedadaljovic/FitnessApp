@@ -35,7 +35,7 @@ fun ScreenStart1(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .clickable { navController.navigate("StartScreen2") },
+                .clickable { navController.navigate("ScreenStart2") },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
