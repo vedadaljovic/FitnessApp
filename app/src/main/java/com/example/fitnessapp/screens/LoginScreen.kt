@@ -31,10 +31,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnessapp.R
-import com.example.fitnessapp.backend.model.MockUserDao
+
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
 import com.example.fitnessapp.backend.dao.UserDao
-import com.example.fitnessapp.backend.model.UserRepository
+import com.example.fitnessapp.backend.repository.UserRepository
 import com.example.fitnessapp.backend.viewmodel.UserViewModel
 import com.example.fitnessapp.backend.viewmodel.UserViewModelFactory
 
@@ -239,15 +239,15 @@ fun CircleButton(imageId: Int) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    val mockNavController = rememberNavController()
-    val mockRepository = UserRepository(MockUserDao()) // Assuming you have a MockUserDao class
-
-    val mockUserViewModel = viewModel<UserViewModel>(factory = UserViewModelFactory(mockRepository))
-
-    FitnessAppTheme {
-        LoginScreen(mockNavController, mockUserViewModel)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginScreenPreview() {
+//    val mockNavController = rememberNavController()
+//    val mockRepository = UserRepository(UserDao()) // Assuming you have a MockUserDao class
+//
+//    val mockUserViewModel = viewModel<UserViewModel>(factory = UserViewModelFactory(mockRepository))
+//
+//    FitnessAppTheme {
+//        LoginScreen(mockNavController, mockUserViewModel)
+//    }
+//}

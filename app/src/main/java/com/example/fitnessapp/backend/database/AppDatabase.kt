@@ -8,7 +8,8 @@ import com.example.fitnessapp.backend.model.User
 
 @Database(
     entities = [User::class],
-    version = 1,
+    version = 3,
+
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun userDao(): UserDao

@@ -2,7 +2,7 @@ package com.example.fitnessapp.backend.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.fitnessapp.backend.model.UserRepository
+import com.example.fitnessapp.backend.repository.UserRepository
 
 class UserViewModelFactory(private val repository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

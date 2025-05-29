@@ -3,7 +3,7 @@ package com.example.fitnessapp.backend.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fitnessapp.backend.model.User
-import com.example.fitnessapp.backend.model.UserRepository
+import com.example.fitnessapp.backend.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
@@ -18,7 +18,7 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     fun insertUser(user: User) {
         viewModelScope.launch {
-            userRepository.insertUser(user)
+            userRepository.insert(user)
         }
     }
 }
