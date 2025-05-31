@@ -23,4 +23,7 @@ interface UserDao : BaseDao<User>{
 
     @Query("UPDATE users SET age = :age WHERE id = :userId")
     suspend fun updateAge(userId: Int, age: Int)
+
+    @Query("UPDATE users SET weight = :weight WHERE id = :userId")
+    suspend fun updateWeight(userId: Int, weight: Double)
 }

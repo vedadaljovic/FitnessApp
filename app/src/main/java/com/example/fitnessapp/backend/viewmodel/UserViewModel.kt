@@ -69,4 +69,15 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             }
         }
     }
+
+    fun updateUserWeight(userId: Int, weight: Double) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateWeight(userId, weight)
+                Log.d("UserViewModel", "User weight updated for userId: $userId, weight: $weight")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user weight for userId: $userId", e)
+            }
+        }
+    }
 }
