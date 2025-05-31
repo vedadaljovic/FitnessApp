@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fitnessapp.backend.model.User
 import com.example.fitnessapp.backend.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
+@HiltViewModel
+class UserViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
     var currentUser: User? = null
         private set
 
