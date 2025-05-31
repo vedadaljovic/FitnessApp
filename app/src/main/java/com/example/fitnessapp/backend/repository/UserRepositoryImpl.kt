@@ -71,4 +71,23 @@ class UserRepositoryImpl @Inject constructor(private val userDao: UserDao): User
         userDao.updateActivityLevel(userId, activityLevel)
     }
 
+    override suspend fun updateUserProfileDetails(userId: Int, fullName: String?, nickname: String?, email: String?, mobileNumber: String?) {
+        fullName?.takeIf { it.isNotBlank() }?.let {
+            userDao.updateFullName(userId, it)
+        }
+        nickname?.takeIf { it.isNotBlank() }?.let {
+            userDao.updateNickname(userId, it)
+        }
+        email?.takeIf { it.isNotBlank() }?.let {
+            userDao.updateEmail(userId, it)
+        }
+        mobileNumber?.takeIf { it.isNotBlank() }?.let {
+            userDao.updateMobileNumber(userId, it)
+        }
+    }
+
+    override suspend fun updateIsSetupComplete(userId: Int, isSetupComplete: Boolean) {
+        userDao.updateIsSetupComplete(userId, isSetupComplete)
+    }
+
 }

@@ -10,11 +10,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,13 +21,37 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnessapp.R
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
+import com.example.fitnessapp.backend.viewmodel.UserViewModel
+import android.util.Log
 
 @Composable
 fun Screen8(navController: NavController) {
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("fitness_app_graph")
+    }
+    val userViewModel: UserViewModel = hiltViewModel(parentEntry)
+    val currentUser by userViewModel.currentUser.collectAsState()
+
+    var fullName by rememberSaveable { mutableStateOf("") }
+    var nickname by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var mobileNumber by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(currentUser) {
+        currentUser?.let {
+            fullName = it.fullName ?: ""
+            nickname = it.nickname ?: ""
+            email = it.email ?: ""
+            mobileNumber = it.mobileNumber ?: ""
+            Log.d("Screen8", "Profile fields initialized from currentUser.")
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -107,11 +128,6 @@ fun Screen8(navController: NavController) {
             Spacer(modifier = Modifier.height(24.dp))
 
             // Form fields
-            var fullName by rememberSaveable { mutableStateOf("") }
-            var nickname by rememberSaveable { mutableStateOf("") }
-            var email by rememberSaveable { mutableStateOf("") }
-            var mobileNumber by rememberSaveable { mutableStateOf("") }
-
             FormField(
                 label = "Full name",
                 value = fullName,
@@ -152,7 +168,23 @@ fun Screen8(navController: NavController) {
 
         // Continue button
         Button(
-            onClick = { navController.navigate("Screen9") },
+            onClick = {
+                Log.d("Screen8", "Continue button clicked.")
+                currentUser?.let { user ->
+                    userViewModel.updateUserProfileDetails(
+                        userId = user.id,
+                        fullName = fullName.takeIf { it.isNotBlank() },
+                        nickname = nickname.takeIf { it.isNotBlank() },
+                        email = email.takeIf { it.isNotBlank() },
+                        mobileNumber = mobileNumber.takeIf { it.isNotBlank() }
+                    )
+                    userViewModel.updateUserIsSetupComplete(user.id, true)
+                    Log.d("Screen8", "Updating profile details for user ID: ${user.id} and setting isSetupComplete to true")
+                    navController.navigate("Screen9")
+                } ?: run {
+                    Log.d("Screen8", "Continue button clicked, but currentUser is null.")
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)

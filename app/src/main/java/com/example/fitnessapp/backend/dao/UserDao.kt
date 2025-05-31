@@ -35,4 +35,19 @@ interface UserDao : BaseDao<User>{
 
     @Query("UPDATE users SET activityLevel = :activityLevel WHERE id = :userId")
     suspend fun updateActivityLevel(userId: Int, activityLevel: String)
+
+    @Query("UPDATE users SET fullName = :fullName WHERE id = :userId")
+    suspend fun updateFullName(userId: Int, fullName: String)
+
+    @Query("UPDATE users SET nickname = :nickname WHERE id = :userId")
+    suspend fun updateNickname(userId: Int, nickname: String)
+
+    @Query("UPDATE users SET email = :email WHERE id = :userId")
+    suspend fun updateEmail(userId: Int, email: String)
+
+    @Query("UPDATE users SET mobileNumber = :mobileNumber WHERE id = :userId")
+    suspend fun updateMobileNumber(userId: Int, mobileNumber: String)
+
+    @Query("UPDATE users SET isSetupComplete = :isSetupComplete WHERE id = :userId")
+    suspend fun updateIsSetupComplete(userId: Int, isSetupComplete: Boolean)
 }

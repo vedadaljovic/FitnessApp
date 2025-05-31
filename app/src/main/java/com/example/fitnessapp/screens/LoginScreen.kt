@@ -58,7 +58,7 @@ fun LoginScreen(navController: NavController) {
         currentUser?.let { user ->
             isSetupComplete?.let { setupComplete ->
                 if (setupComplete) {
-                    navController.navigate("BeginnerScreen") {
+                    navController.navigate("Screen9") {
                         popUpTo("LoginScreen") { inclusive = true }
                     }
                 } else {

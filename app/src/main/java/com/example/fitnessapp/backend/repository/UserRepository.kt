@@ -20,4 +20,8 @@ interface UserRepository : BaseRepository<User> {
     suspend fun updateGoal(userId: Int, goal: String)
 
     suspend fun updateActivityLevel(userId: Int, activityLevel: String)
+
+    suspend fun updateUserProfileDetails(userId: Int, fullName: String?, nickname: String?, email: String?, mobileNumber: String?)
+
+    suspend fun updateIsSetupComplete(userId: Int, isSetupComplete: Boolean)
 }

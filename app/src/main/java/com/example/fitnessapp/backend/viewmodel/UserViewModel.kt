@@ -113,4 +113,29 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             }
         }
     }
+
+    fun updateUserProfileDetails(userId: Int, fullName: String?, nickname: String?, email: String?, mobileNumber: String?) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateUserProfileDetails(userId, fullName, nickname, email, mobileNumber)
+                Log.d("UserViewModel", "User profile details updated for userId: $userId")
+                 // Refresh currentUser to reflect changes in UI if needed immediately
+                _currentUser.value = userRepository.getUserById(userId)
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user profile details for userId: $userId", e)
+            }
+        }
+    }
+
+    fun updateUserIsSetupComplete(userId: Int, isSetupComplete: Boolean) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateIsSetupComplete(userId, isSetupComplete)
+                _isSetupComplete.value = isSetupComplete
+                Log.d("UserViewModel", "User isSetupComplete updated for userId: $userId to $isSetupComplete")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user isSetupComplete for userId: $userId", e)
+            }
+        }
+    }
 }
