@@ -1,5 +1,6 @@
 package com.example.fitnessapp.backend.repository
 
+import android.util.Log
 import com.example.fitnessapp.backend.dao.UserDao
 import com.example.fitnessapp.backend.model.User
 import javax.inject.Inject
@@ -11,7 +12,16 @@ class UserRepositoryImpl @Inject constructor(private val userDao: UserDao): User
     }
 
     override suspend fun insert(entity: User) {
-        return userDao.insert(entity)
+        Log.d("UserRepositoryImpl", "Attempting to insert user: ${entity.email}")
+        try {
+            userDao.insert(entity)
+            Log.d("UserRepositoryImpl", "User insertion successful for: ${entity.email}")
+        } catch (e: Exception) {
+            Log.e("UserRepositoryImpl", "Error inserting user: ${entity.email}", e)
+            // Ovdje možete odlučiti da li želite da re-throwujete izuzetak
+            // ili da ga obradite na neki drugi način
+            throw e // Primjer: ponovno bacanje izuzetka da bi ViewModel bio svjestan greške
+        }
     }
 
     override suspend fun update(entity: User) {
@@ -23,7 +33,14 @@ class UserRepositoryImpl @Inject constructor(private val userDao: UserDao): User
     }
 
     override suspend fun getUser(username: String, password: String): User? {
-        return userDao.getUser(username, password)
+        Log.d("UserRepositoryImpl", "Attempting to get user. Username: '$username', Password: '$password'")
+        val user = userDao.getUser(username, password)
+        if (user != null) {
+            Log.d("UserRepositoryImpl", "User found: ${user.email}")
+        } else {
+            Log.d("UserRepositoryImpl", "User not found for Username: '$username'")
+        }
+        return user
     }
 
 }

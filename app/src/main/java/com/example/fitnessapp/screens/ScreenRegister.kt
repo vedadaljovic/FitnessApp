@@ -28,11 +28,20 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fitnessapp.R
+import com.example.fitnessapp.backend.model.User
+import com.example.fitnessapp.backend.viewmodel.UserViewModel
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
 
 @Composable
-fun ScreenRegister(navController: NavController) {
+fun ScreenRegister(navController: NavController, userViewModel: UserViewModel = hiltViewModel()) {
+    var name by remember { mutableStateOf(TextFieldValue()) }
+    var email by remember { mutableStateOf(TextFieldValue()) }
+    var password by remember { mutableStateOf(TextFieldValue()) }
+    var passwordConfirmed by remember { mutableStateOf(TextFieldValue()) }
+    var registrationError by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +90,6 @@ fun ScreenRegister(navController: NavController) {
                     style = TextStyle(fontSize = 18.sp, color = Color.Black)
                 )
 
-                var name by remember { mutableStateOf(TextFieldValue()) }
                 TextField(
                     value = name,
                     onValueChange = { name = it },
@@ -96,10 +104,9 @@ fun ScreenRegister(navController: NavController) {
                     style = TextStyle(fontSize = 18.sp, color = Color.Black)
                 )
 
-                var username by remember { mutableStateOf(TextFieldValue()) }
                 TextField(
-                    value = username,
-                    onValueChange = { username = it },
+                    value = email,
+                    onValueChange = { email = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
@@ -112,7 +119,6 @@ fun ScreenRegister(navController: NavController) {
                     style = TextStyle(fontSize = 18.sp, color = Color.Black)
                 )
 
-                var password by remember { mutableStateOf(TextFieldValue()) }
                 TextField(
                     value = password,
                     onValueChange = { password = it },
@@ -127,7 +133,6 @@ fun ScreenRegister(navController: NavController) {
                     style = TextStyle(fontSize = 18.sp, color = Color.Black)
                 )
 
-                var passwordConfirmed by remember { mutableStateOf(TextFieldValue()) }
                 TextField(
                     value = passwordConfirmed,
                     onValueChange = { passwordConfirmed = it },
@@ -182,7 +187,23 @@ fun ScreenRegister(navController: NavController) {
         }
 
         Button(
-            onClick = { /* Handle login click */ },
+            onClick = {
+                if (name.text.isBlank() || email.text.isBlank() || password.text.isBlank() || passwordConfirmed.text.isBlank()) {
+                    registrationError = "Sva polja moraju biti popunjena."
+                } else if (password.text != passwordConfirmed.text) {
+                    registrationError = "Lozinke se ne podudaraju."
+                } else {
+                    registrationError = null
+                    val newUser = User(
+                        username =  name.text,
+                        fullName = name.text,
+                        email = email.text,
+                        password = password.text
+                    )
+                    userViewModel.insertUser(newUser)
+                    navController.navigate("LoginScreen")
+                }
+            },
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .width(200.dp)
@@ -195,6 +216,14 @@ fun ScreenRegister(navController: NavController) {
                 text = "Sign Up",
                 fontSize = 28.sp,
                 color = Color.White
+            )
+        }
+
+        registrationError?.let {
+            Text(
+                text = it,
+                color = Color.Red,
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
 

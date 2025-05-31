@@ -9,34 +9,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.fitnessapp.backend.repository.UserRepository
-import com.example.fitnessapp.backend.repository.UserRepositoryImpl
-import com.example.fitnessapp.backend.viewmodel.UserViewModel
-import com.example.fitnessapp.backend.viewmodel.UserViewModelFactory
 import com.example.fitnessapp.screens.*
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val userDao = (application as MyApplication).database.userDao()
-            val repository = UserRepositoryImpl(userDao)
-            val userViewModel: UserViewModel = viewModel(factory = UserViewModelFactory(repository))
-
-            FitnessApp(userViewModel)
+            FitnessApp()
         }
     }
 }
 
 @Composable
-fun FitnessApp(userViewModel: UserViewModel) {
+fun FitnessApp() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "ScreenStart1") {
@@ -53,7 +46,7 @@ fun FitnessApp(userViewModel: UserViewModel) {
             ScreenStart4(navController)
         }
         composable("LoginScreen") {
-            LoginScreen(navController, userViewModel)
+            LoginScreen(navController)
         }
         composable("ScreenRegister") {
             ScreenRegister(navController)

@@ -27,22 +27,31 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnessapp.R
 
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
-import com.example.fitnessapp.backend.dao.UserDao
-import com.example.fitnessapp.backend.repository.UserRepository
 import com.example.fitnessapp.backend.viewmodel.UserViewModel
-import com.example.fitnessapp.backend.viewmodel.UserViewModelFactory
 
 @Composable
-fun LoginScreen(navController: NavController, userViewModel: UserViewModel) {
+fun LoginScreen(navController: NavController, userViewModel: UserViewModel = hiltViewModel()) {
     var username by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
-    var loginError by remember { mutableStateOf(false) }
+    val currentUser by userViewModel.currentUser.collectAsState()
+    val loginErrorOccurred by userViewModel.loginErrorOccurred.collectAsState()
+
+    LaunchedEffect(currentUser) {
+        currentUser?.let {
+            // Korisnik je uspješno prijavljen, navigiraj na sljedeći ekran
+            navController.navigate("Screen1") { // Zamijenite "Screen1" sa vašom željenom destinacijom
+                // Opcionalno: očistite backstack ako ne želite da se korisnik vrati na LoginScreen pritiskom na back
+                popUpTo("LoginScreen") { inclusive = true }
+            }
+            userViewModel.resetLoginError() // Resetuj grešku jer je login uspješan
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -150,8 +159,8 @@ fun LoginScreen(navController: NavController, userViewModel: UserViewModel) {
 
         Button(
             onClick = {
+                userViewModel.resetLoginError() // Resetuj prethodnu grešku prije novog pokušaja
                 userViewModel.login(username.text, password.text)
-                loginError = userViewModel.currentUser == null
             },
             modifier = Modifier
                 .padding(bottom = 16.dp)
@@ -168,9 +177,9 @@ fun LoginScreen(navController: NavController, userViewModel: UserViewModel) {
             )
         }
 
-        if (loginError) {
+        if (loginErrorOccurred) { // Pokaži grešku ako je loginErrorOccurred true
             Text(
-                text = "Login failed. Please try again.",
+                text = "Login failed. Incorrect username or password.",
                 color = Color.Red,
                 modifier = Modifier.padding(top = 16.dp)
             )
