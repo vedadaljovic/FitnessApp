@@ -30,26 +30,44 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import com.example.fitnessapp.R
 
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
 import com.example.fitnessapp.backend.viewmodel.UserViewModel
 
 @Composable
-fun LoginScreen(navController: NavController, userViewModel: UserViewModel = hiltViewModel()) {
+fun LoginScreen(navController: NavController) {
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("fitness_app_graph")
+    }
+    val userViewModel: UserViewModel = hiltViewModel(parentEntry)
+
     var username by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
     val currentUser by userViewModel.currentUser.collectAsState()
     val loginErrorOccurred by userViewModel.loginErrorOccurred.collectAsState()
+    val isSetupComplete by userViewModel.isSetupComplete.collectAsState()
 
-    LaunchedEffect(currentUser) {
-        currentUser?.let {
-            // Korisnik je uspješno prijavljen, navigiraj na sljedeći ekran
-            navController.navigate("Screen1") { // Zamijenite "Screen1" sa vašom željenom destinacijom
-                // Opcionalno: očistite backstack ako ne želite da se korisnik vrati na LoginScreen pritiskom na back
-                popUpTo("LoginScreen") { inclusive = true }
+    LaunchedEffect(currentUser, isSetupComplete) {
+        currentUser?.let { user ->
+            isSetupComplete?.let { setupComplete ->
+                if (setupComplete) {
+                    navController.navigate("BeginnerScreen") {
+                        popUpTo("LoginScreen") { inclusive = true }
+                    }
+                } else {
+                    navController.navigate("Screen1") {
+                        popUpTo("LoginScreen") { inclusive = true }
+                    }
+                }
+                userViewModel.resetLoginError()
             }
-            userViewModel.resetLoginError() // Resetuj grešku jer je login uspješan
         }
     }
 
@@ -159,7 +177,7 @@ fun LoginScreen(navController: NavController, userViewModel: UserViewModel = hil
 
         Button(
             onClick = {
-                userViewModel.resetLoginError() // Resetuj prethodnu grešku prije novog pokušaja
+                userViewModel.resetLoginError()
                 userViewModel.login(username.text, password.text)
             },
             modifier = Modifier
@@ -177,7 +195,7 @@ fun LoginScreen(navController: NavController, userViewModel: UserViewModel = hil
             )
         }
 
-        if (loginErrorOccurred) { // Pokaži grešku ako je loginErrorOccurred true
+        if (loginErrorOccurred) {
             Text(
                 text = "Login failed. Incorrect username or password.",
                 color = Color.Red,

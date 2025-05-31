@@ -19,5 +19,6 @@ data class User(
     val height: Double = 0.0,
     val weight: Double = 0.0,
     val gender: String = "",
-    val activityLevel: String = ""
+    val activityLevel: String = "",
+    val isSetupComplete: Boolean = false
 )

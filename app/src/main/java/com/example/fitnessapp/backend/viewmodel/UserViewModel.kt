@@ -19,12 +19,19 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     private val _loginErrorOccurred = MutableStateFlow<Boolean>(false)
     val loginErrorOccurred: StateFlow<Boolean> = _loginErrorOccurred
 
+    private val _isSetupComplete = MutableStateFlow<Boolean?>(null)
+    val isSetupComplete: StateFlow<Boolean?> = _isSetupComplete
+
     fun login(username: String, password: String) {
         viewModelScope.launch {
             val user = userRepository.getUser(username, password)
             _currentUser.value = user
             if (user == null) {
                 _loginErrorOccurred.value = true
+            } else {
+                val setupComplete = userRepository.isSetupComplete(user.id)
+                _isSetupComplete.value = setupComplete
+                Log.d("UserViewModel", "User setup complete status: $setupComplete")
             }
         }
     }
@@ -36,7 +43,19 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     fun insertUser(user: User) {
         viewModelScope.launch {
             userRepository.insert(user)
-            Log.d("UserViewModel", "User inserted - Email: ${user.email}, FullName: ${user.fullName}")
+            _isSetupComplete.value = false
+            Log.d("UserViewModel", "User inserted - Email: ${user.email}, FullName: ${user.fullName}, SetupComplete: false")
+        }
+    }
+
+    fun updateUserGender(userId: Int, gender: String) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateGender(userId, gender)
+                Log.d("UserViewModel", "User gender updated for userId: $userId, gender: $gender")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user gender for userId: $userId", e)
+            }
         }
     }
 }

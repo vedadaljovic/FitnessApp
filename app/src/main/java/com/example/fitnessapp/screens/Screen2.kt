@@ -15,19 +15,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fitnessapp.ui.theme.FitnessAppTheme
-import com.example.fitnessapp.R
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.fitnessapp.R
+import com.example.fitnessapp.backend.viewmodel.UserViewModel
+import com.example.fitnessapp.ui.theme.FitnessAppTheme
+import android.util.Log
+import androidx.compose.runtime.remember
 
 @Composable
 fun Screen2(navController: NavController) {
+    // Dohvati NavBackStackEntry za roditeljski nav graf.
+    // "fitness_app_graph" mora odgovarati 'route' parametru vašeg NavHost-a.
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("fitness_app_graph")
+    }
+    val userViewModel: UserViewModel = hiltViewModel(parentEntry)
+
     var selectedGender by remember { mutableStateOf(Gender.None) }
+    val currentUser by userViewModel.currentUser.collectAsState()
+
+    LaunchedEffect(key1 = currentUser) {
+        Log.d("Screen2", "CurrentUser state in Screen2: ${currentUser}")
+    }
 
     Box(
         modifier = Modifier
@@ -114,7 +131,25 @@ fun Screen2(navController: NavController) {
 
         // Continue button fixed at the bottom
         Button(
-            onClick = { navController.navigate("Screen3") },
+            onClick = {
+                Log.d("Screen2", "Continue button clicked.")
+                Log.d("Screen2", "Current user: ${currentUser}")
+                Log.d("Screen2", "Selected gender: ${selectedGender.name}")
+
+                currentUser?.let { user ->
+                    Log.d("Screen2", "Current user is not null. User ID: ${user.id}")
+                    if (selectedGender != Gender.None) {
+                        Log.d("Screen2", "Gender selected: ${selectedGender.name}. Updating gender for user ID: ${user.id}")
+                        userViewModel.updateUserGender(user.id, selectedGender.name)
+                        Log.d("Screen2", "Navigating to Screen3.")
+                        navController.navigate("Screen3")
+                    } else {
+                        Log.d("Screen2", "Gender not selected. Please select a gender.")
+                    }
+                } ?: run {
+                    Log.d("Screen2", "Continue button clicked, but currentUser is null.")
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)

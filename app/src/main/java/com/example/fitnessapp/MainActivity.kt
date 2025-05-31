@@ -32,7 +32,11 @@ class MainActivity : ComponentActivity() {
 fun FitnessApp() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "ScreenStart1") {
+    NavHost(
+        navController = navController,
+        startDestination = "ScreenStart1",
+        route = "fitness_app_graph"
+    ) {
         composable("ScreenStart1") {
             ScreenStart1(navController)
         }

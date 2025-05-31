@@ -43,4 +43,12 @@ class UserRepositoryImpl @Inject constructor(private val userDao: UserDao): User
         return user
     }
 
+    override suspend fun isSetupComplete(userId: Int): Boolean? {
+        return userDao.isSetupComplete(userId)
+    }
+
+    override suspend fun updateGender(userId: Int, gender: String) {
+        userDao.updateGender(userId, gender)
+    }
+
 }
