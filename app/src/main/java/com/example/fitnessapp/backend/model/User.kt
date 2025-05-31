@@ -20,5 +20,6 @@ data class User(
     val weight: Double = 0.0,
     val gender: String = "",
     val activityLevel: String = "",
-    val isSetupComplete: Boolean = false
+    val isSetupComplete: Boolean = false,
+    val goal: String = "",
 )

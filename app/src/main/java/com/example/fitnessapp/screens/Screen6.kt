@@ -14,14 +14,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
+import com.example.fitnessapp.backend.viewmodel.UserViewModel
+import android.util.Log
 
 @Composable
 fun Screen6(navController: NavController) {
-    // State to track the selected option
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("fitness_app_graph")
+    }
+    val userViewModel: UserViewModel = hiltViewModel(parentEntry)
+    val currentUser by userViewModel.currentUser.collectAsState()
+
     var selectedOption by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(currentUser) {
+        currentUser?.goal?.let {
+            if (it.isNotEmpty()) {
+                selectedOption = it
+                Log.d("Screen6", "Goal initialized from currentUser: $it")
+            }
+        }
+    }
 
     // List of options
     val options = listOf("Lose Weight", "Gain Weight", "Muscle Mass Gain", "Shape Body", "Others")
@@ -93,7 +110,24 @@ fun Screen6(navController: NavController) {
 
         // Continue button
         Button(
-            onClick = { navController.navigate("Screen7") },
+            onClick = {
+                Log.d("Screen6", "Continue button clicked.")
+                currentUser?.let { user ->
+                    selectedOption?.let { goal ->
+                        if (goal.isNotEmpty()) {
+                            userViewModel.updateUserGoal(user.id, goal)
+                            Log.d("Screen6", "Updating goal to: $goal for user ID: ${user.id}")
+                            navController.navigate("Screen7")
+                        } else {
+                            Log.d("Screen6", "Selected goal is empty.")
+                        }
+                    } ?: run {
+                        Log.d("Screen6", "No goal selected.")
+                    }
+                } ?: run {
+                    Log.d("Screen6", "Continue button clicked, but currentUser is null.")
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)

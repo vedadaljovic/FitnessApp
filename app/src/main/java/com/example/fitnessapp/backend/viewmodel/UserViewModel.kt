@@ -91,4 +91,15 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             }
         }
     }
+
+    fun updateUserGoal(userId: Int, goal: String) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateGoal(userId, goal)
+                Log.d("UserViewModel", "User goal updated for userId: $userId, goal: $goal")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user goal for userId: $userId", e)
+            }
+        }
+    }
 }

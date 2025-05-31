@@ -8,7 +8,7 @@ import com.example.fitnessapp.backend.model.User
 
 @Database(
     entities = [User::class],
-    version = 6,
+    version = 7,
 
 )
 abstract class AppDatabase: RoomDatabase() {
