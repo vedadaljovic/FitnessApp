@@ -59,4 +59,8 @@ class UserRepositoryImpl @Inject constructor(private val userDao: UserDao): User
         userDao.updateWeight(userId, weight)
     }
 
+    override suspend fun updateHeight(userId: Int, height: Double) {
+        userDao.updateHeight(userId, height)
+    }
+
 }

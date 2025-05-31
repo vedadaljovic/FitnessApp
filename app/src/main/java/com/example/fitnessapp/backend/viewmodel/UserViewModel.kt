@@ -80,4 +80,15 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             }
         }
     }
+
+    fun updateUserHeight(userId: Int, height: Double) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateHeight(userId, height)
+                Log.d("UserViewModel", "User height updated for userId: $userId, height: $height")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user height for userId: $userId", e)
+            }
+        }
+    }
 }
