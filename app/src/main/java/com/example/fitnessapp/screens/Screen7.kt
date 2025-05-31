@@ -15,14 +15,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
+import com.example.fitnessapp.backend.viewmodel.UserViewModel
+import android.util.Log
 
 @Composable
 fun Screen7(navController: NavController) {
-    // State to track the selected button
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("fitness_app_graph")
+    }
+    val userViewModel: UserViewModel = hiltViewModel(parentEntry)
+    val currentUser by userViewModel.currentUser.collectAsState()
+
     var selectedButton by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(currentUser) {
+        currentUser?.activityLevel?.let {
+            if (it.isNotEmpty()) {
+                selectedButton = it
+                Log.d("Screen7", "Activity level initialized from currentUser: $it")
+            }
+        }
+    }
 
     // List of button labels
     val buttons = listOf("Beginner", "Intermediate", "Advance")
@@ -77,7 +94,24 @@ fun Screen7(navController: NavController) {
 
         // Continue button
         Button(
-            onClick = { navController.navigate("Screen8") },
+            onClick = {
+                Log.d("Screen7", "Continue button clicked.")
+                currentUser?.let { user ->
+                    selectedButton?.let { activityLevel ->
+                        if (activityLevel.isNotEmpty()) {
+                            userViewModel.updateUserActivityLevel(user.id, activityLevel)
+                            Log.d("Screen7", "Updating activity level to: $activityLevel for user ID: ${user.id}")
+                            navController.navigate("Screen8")
+                        } else {
+                            Log.d("Screen7", "Selected activity level is empty.")
+                        }
+                    } ?: run {
+                        Log.d("Screen7", "No activity level selected.")
+                    }
+                } ?: run {
+                    Log.d("Screen7", "Continue button clicked, but currentUser is null.")
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)

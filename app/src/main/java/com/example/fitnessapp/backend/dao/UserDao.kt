@@ -32,4 +32,7 @@ interface UserDao : BaseDao<User>{
 
     @Query("UPDATE users SET goal = :goal WHERE id = :userId")
     suspend fun updateGoal(userId: Int, goal: String)
+
+    @Query("UPDATE users SET activityLevel = :activityLevel WHERE id = :userId")
+    suspend fun updateActivityLevel(userId: Int, activityLevel: String)
 }

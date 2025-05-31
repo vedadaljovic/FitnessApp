@@ -102,4 +102,15 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             }
         }
     }
+
+    fun updateUserActivityLevel(userId: Int, activityLevel: String) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateActivityLevel(userId, activityLevel)
+                Log.d("UserViewModel", "User activity level updated for userId: $userId, activityLevel: $activityLevel")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user activity level for userId: $userId", e)
+            }
+        }
+    }
 }

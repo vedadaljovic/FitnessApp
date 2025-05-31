@@ -18,4 +18,6 @@ interface UserRepository : BaseRepository<User> {
     suspend fun updateHeight(userId: Int, height: Double)
 
     suspend fun updateGoal(userId: Int, goal: String)
+
+    suspend fun updateActivityLevel(userId: Int, activityLevel: String)
 }

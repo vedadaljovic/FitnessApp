@@ -67,4 +67,8 @@ class UserRepositoryImpl @Inject constructor(private val userDao: UserDao): User
         userDao.updateGoal(userId, goal)
     }
 
+    override suspend fun updateActivityLevel(userId: Int, activityLevel: String) {
+        userDao.updateActivityLevel(userId, activityLevel)
+    }
+
 }
