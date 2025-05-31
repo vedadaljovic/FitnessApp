@@ -51,4 +51,8 @@ class UserRepositoryImpl @Inject constructor(private val userDao: UserDao): User
         userDao.updateGender(userId, gender)
     }
 
+    override suspend fun updateAge(userId: Int, age: Int) {
+        userDao.updateAge(userId, age)
+    }
+
 }

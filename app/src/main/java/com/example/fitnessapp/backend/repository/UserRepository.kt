@@ -10,4 +10,6 @@ interface UserRepository : BaseRepository<User> {
     suspend fun isSetupComplete(userId: Int): Boolean?
 
     suspend fun updateGender(userId: Int, gender: String)
+
+    suspend fun updateAge(userId: Int, age: Int)
 }

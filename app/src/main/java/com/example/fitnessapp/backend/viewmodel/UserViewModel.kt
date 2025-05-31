@@ -58,4 +58,15 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             }
         }
     }
+
+    fun updateUserAge(userId: Int, age: Int) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateAge(userId, age)
+                Log.d("UserViewModel", "User age updated for userId: $userId, age: $age")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user age for userId: $userId", e)
+            }
+        }
+    }
 }

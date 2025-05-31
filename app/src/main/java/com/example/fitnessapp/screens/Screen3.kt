@@ -16,13 +16,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.fitnessapp.backend.viewmodel.UserViewModel
 import com.example.fitnessapp.ui.theme.FitnessAppTheme
+import android.util.Log
 
 @Composable
 fun Screen3(navController: NavHostController) {
-    var selectedAge by remember { mutableStateOf(18) }
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("fitness_app_graph")
+    }
+    val userViewModel: UserViewModel = hiltViewModel(parentEntry)
+    val currentUser by userViewModel.currentUser.collectAsState()
+
+    var selectedAge by remember { mutableStateOf(currentUser?.age?.takeIf { it > 0 } ?: 18) }
+
+    LaunchedEffect(currentUser) {
+        currentUser?.age?.takeIf { it > 0 }?.let {
+            if (selectedAge != it) {
+                selectedAge = it
+                Log.d("Screen3", "Selected age initialized/updated from currentUser: $it")
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -36,6 +54,7 @@ fun Screen3(navController: NavHostController) {
             modifier = Modifier
                 .clickable { navController.navigateUp() }
                 .padding(start = 16.dp, top = 16.dp)
+                .align(Alignment.TopStart) // Poravnaj na vrh-lijevo unutar Box-a
         )
 
         // Central content
@@ -107,7 +126,26 @@ fun Screen3(navController: NavHostController) {
 
         // Continue button
         Button(
-            onClick = { navController.navigate("Screen4") },
+            onClick = {
+                Log.d("Screen3", "Continue button clicked.")
+                Log.d("Screen3", "Current user: ${currentUser}")
+                Log.d("Screen3", "Selected age: $selectedAge")
+
+                currentUser?.let { user ->
+                    Log.d("Screen3", "Current user is not null. User ID: ${user.id}")
+                    // Provjeri da li su godine validne prije ažuriranja (npr. veće od 0)
+                    if (selectedAge > 0) {
+                        Log.d("Screen3", "Age selected: $selectedAge. Updating age for user ID: ${user.id}")
+                        userViewModel.updateUserAge(user.id, selectedAge)
+                        Log.d("Screen3", "Navigating to Screen4.")
+                        navController.navigate("Screen4")
+                    } else {
+                        Log.d("Screen3", "Invalid age selected: $selectedAge. Please select a valid age.")
+                    }
+                } ?: run {
+                    Log.d("Screen3", "Continue button clicked, but currentUser is null.")
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
@@ -125,6 +163,7 @@ fun Screen3(navController: NavHostController) {
         }
     }
 }
+
 @Preview( showBackground = true)
 @Composable
 fun Screen3Preview(){
